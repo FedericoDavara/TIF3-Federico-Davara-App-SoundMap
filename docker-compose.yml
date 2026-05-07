@@ -1,0 +1,45 @@
+# Docker Compose para SoundMap+
+
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: soundmap_db
+    environment:
+      POSTGRES_DB: soundmap_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - soundmap_db_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: soundmap_backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/soundmap_db
+      SECRET_KEY: your-secret-key-change-this
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    container_name: soundmap_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  soundmap_db_data:
