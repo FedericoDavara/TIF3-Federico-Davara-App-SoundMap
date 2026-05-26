@@ -1,13 +1,38 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
 .app-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: #f8f9fa;
 }
 
 .main-content {
   flex: 1;
-  padding: 20px;
-  max-width: 1200px;
+  padding: 130px 16px 40px 16px;
+  max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    padding: 120px 32px 40px 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    padding: 110px 40px 40px 40px;
+  }
 }

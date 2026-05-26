@@ -39,4 +39,37 @@ export const authService = {
   },
 };
 
+export const recordingService = {
+  uploadRecording: async (latitude, longitude, noiseLevel, audioData, description) => {
+    const response = await api.post('/api/recordings/upload', {
+      latitude,
+      longitude,
+      noise_level: noiseLevel,
+      audio_data: audioData,
+      description,
+    });
+    return response.data;
+  },
+
+  getUserRecordings: async () => {
+    const response = await api.get('/api/recordings/me');
+    return response.data;
+  },
+
+  getAllRecordings: async () => {
+    const response = await api.get('/api/recordings/all');
+    return response.data;
+  },
+
+  getRecordingById: async (recordingId) => {
+    const response = await api.get(`/api/recordings/${recordingId}`);
+    return response.data;
+  },
+
+  deleteRecording: async (recordingId) => {
+    const response = await api.delete(`/api/recordings/${recordingId}`);
+    return response.data;
+  },
+};
+
 export default api;

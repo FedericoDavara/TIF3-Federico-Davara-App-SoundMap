@@ -1,10 +1,12 @@
 import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import './Dashboard.css';
 import ruido from '../assets/images/ruido.png';
 
 function Dashboard() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   return (
     <div className="dashboard-container">
@@ -14,17 +16,21 @@ function Dashboard() {
         <p className="welcome-subtitle">
           Hola <span className="username">{user?.username}</span>, nos alegra tenerte aquí
         </p>
-        <p className="welcome-description">
-        </p>
         <div className="feature-grid">
-          <div className="feature-item">
+          <div className="feature-item" onClick={() => navigate('/recordings')}>
+            <div className="feature-icon">📊</div>
+            <h3>Mis Grabaciones</h3>
+            <p>Escucha y gestiona tus grabaciones de sonido</p>
+          </div>
+          <div className="feature-item" onClick={() => navigate('/recorder')}>
+            <div className="feature-icon">🎤</div>
+            <h3>Grabadora</h3>
+            <p>Comienza a registrar el ruido de tu entorno</p>
+          </div>
+          <div className="feature-item" onClick={() => navigate('/map')}>
             <div className="feature-icon">🗺️</div>
             <h3>Mapa Interactivo</h3>
-
-          </div>
-          <div className="feature-item">
-            <div className="feature-icon">🎤</div>
-            <h3>Compartir tus grabaciones</h3>
+            <p>Visualiza las grabaciones y niveles de ruido</p>
           </div>
         </div>
         <p className="coming-soon">

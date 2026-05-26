@@ -1,25 +1,27 @@
 .navbar {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 1rem 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem 16px;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 100;
+  backdrop-filter: blur(10px);
 }
 
 .navbar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0;
+  width: 100%;
 }
 
 .navbar-logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.2rem;
+  font-weight: 700;
   color: white;
   text-decoration: none;
   display: flex;
@@ -29,6 +31,11 @@
   border: none;
   cursor: pointer;
   padding: 0;
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover {
+  transform: scale(1.05);
 }
 
 .navbar-logo-btn {
@@ -36,39 +43,70 @@
 }
 
 .navbar-logo-img {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
-  border-radius: 5px;
-}
-
-.navbar-logo:hover {
-  opacity: 0.9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
 }
 
 .nav-username {
   color: white;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: none;
 }
 
 .nav-logout-btn {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.15);
   color: white;
-  border: 1px solid white;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
   transition: all 0.3s ease;
 }
 
 .nav-logout-btn:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.6);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (min-width: 640px) {
+  .navbar {
+    padding: 1.2rem 32px;
+  }
+
+  .navbar-logo {
+    font-size: 1.4rem;
+  }
+
+  .navbar-logo-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-username {
+    display: block;
+  }
+
+  .nav-menu {
+    gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .navbar {
+    padding: 1.2rem 40px;
+  }
 }

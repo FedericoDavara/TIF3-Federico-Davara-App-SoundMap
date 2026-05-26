@@ -5,6 +5,9 @@ import Navbar from './components/Navbar';
 import MapBackground from './components/MapBackground';
 import AuthPage from './pages/AuthPage';
 import Dashboard from './pages/Dashboard';
+import RecorderPage from './pages/RecorderPage';
+import RecordingsPage from './pages/RecordingsPage';
+import MapPage from './pages/MapPage';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
 
@@ -14,18 +17,44 @@ function App() {
       <AuthProvider>
         <MapBackground />
         <Navbar />
-        <Routes>
-          <Route path="/" element={<AuthPage />} />
-          <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<AuthPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/recorder"
+              element={
+                <PrivateRoute>
+                  <RecorderPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/recordings"
+              element={
+                <PrivateRoute>
+                  <RecordingsPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/map"
+              element={
+                <PrivateRoute>
+                  <MapPage />
+                </PrivateRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </main>
       </AuthProvider>
     </Router>
   );

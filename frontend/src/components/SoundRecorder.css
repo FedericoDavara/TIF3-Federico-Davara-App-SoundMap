@@ -1,0 +1,337 @@
+.sound-recorder-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0;
+  animation: slideIn 0.8s ease-out 0.2s backwards;
+}
+
+.recorder-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 28px 20px;
+  box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.recorder-card h2 {
+  text-align: center;
+  margin: 0 0 28px 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+/* Medidor de ruido */
+.noise-display {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.noise-meter {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 24px 20px;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+}
+
+.noise-meter.recording {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.noise-level-bar {
+  width: 100%;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.noise-level-fill {
+  background: linear-gradient(90deg, #4ade80 0%, #60a5fa 25%, #fbbf24 50%, #f97316 75%, #f87171 100%);
+  transition: width 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+  font-weight: 700;
+  font-size: 12px;
+  box-shadow: inset -2px 0 8px rgba(0, 0, 0, 0.15);
+}
+
+.noise-value {
+  font-size: 42px;
+  font-weight: 800;
+  margin: 0;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  letter-spacing: -1px;
+}
+
+.recording-time {
+  font-size: 16px;
+  margin: 12px 0 0 0;
+  opacity: 1;
+  font-weight: 600;
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Descripción del ruido */
+.description-input {
+  margin-bottom: 28px;
+}
+
+.description-input label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  opacity: 0.95;
+}
+
+.description-input input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.description-input input::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+
+.description-input input:focus {
+  outline: none;
+  background: white;
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.4), inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.description-input input:disabled {
+  background: rgba(255, 255, 255, 0.6);
+  cursor: not-allowed;
+  color: #999;
+}
+
+/* Botones */
+.button-group {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 28px;
+  width: 100%;
+}
+
+.btn {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-primary {
+  background: white;
+  color: #667eea;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(248, 113, 113, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(74, 222, 128, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 640px) {
+  .button-group {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Mensajes de estado */
+.status-message {
+  text-align: center;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  animation: slideIn 0.4s ease-out;
+}
+
+.status-message.success {
+  background: rgba(74, 222, 128, 0.2);
+  border-color: rgba(74, 222, 128, 0.5);
+  color: #d1fae5;
+  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.2);
+}
+
+.status-message.error {
+  background: rgba(248, 113, 113, 0.2);
+  border-color: rgba(248, 113, 113, 0.5);
+  color: #fee2e2;
+  box-shadow: 0 4px 12px rgba(248, 113, 113, 0.2);
+}
+
+/* Info box */
+.info-box {
+  background: rgba(255, 255, 255, 0.12);
+  border-left: 4px solid rgba(255, 255, 255, 0.5);
+  padding: 18px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.info-box p {
+  margin: 10px 0;
+  opacity: 0.95;
+}
+
+.info-box p:first-child {
+  margin-top: 0;
+}
+
+.info-box p:last-child {
+  margin-bottom: 0;
+}
+
+.info-box strong {
+  font-weight: 700;
+  opacity: 1;
+}
+
+/* Responsive */
+@media (min-width: 640px) {
+  .recorder-card {
+    padding: 36px 32px;
+  }
+
+  .recorder-card h2 {
+    font-size: 26px;
+    margin-bottom: 32px;
+  }
+
+  .noise-display {
+    margin-bottom: 32px;
+  }
+
+  .noise-meter {
+    padding: 28px 24px;
+  }
+
+  .noise-level-bar {
+    height: 56px;
+    margin-bottom: 20px;
+  }
+
+  .noise-value {
+    font-size: 48px;
+  }
+
+  .recording-time {
+    font-size: 18px;
+  }
+
+  .description-input input {
+    padding: 16px 18px;
+    font-size: 15px;
+  }
+
+  .button-group {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .btn {
+    padding: 16px 28px;
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .recorder-card {
+    padding: 40px 36px;
+  }
+
+  .recorder-card h2 {
+    font-size: 28px;
+  }
+}

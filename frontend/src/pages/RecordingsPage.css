@@ -1,0 +1,194 @@
+.recordings-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+.recordings-header {
+  text-align: center;
+  animation: slideIn 0.8s ease-out;
+}
+
+.recordings-header h1 {
+  color: #667eea;
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.recordings-header p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.recordings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recording-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+  transition: all 0.3s ease;
+  animation: slideIn 0.6s ease-out;
+  position: relative;
+  z-index: 5;
+}
+
+.recording-card:hover {
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+  transform: translateY(-2px);
+}
+
+.recording-info {
+  margin-bottom: 16px;
+}
+
+.recording-card h3 {
+  color: #667eea;
+  font-size: 1.2rem;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.recording-location,
+.recording-noise,
+.recording-date {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 6px 0;
+  line-height: 1.5;
+}
+
+.recording-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 6;
+}
+
+.btn-play,
+.btn-delete {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-play {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: 1px solid transparent;
+}
+
+.btn-play:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-play:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-delete {
+  background: rgba(255, 87, 87, 0.1);
+  color: #ff5757;
+  border: 1px solid rgba(255, 87, 87, 0.3);
+}
+
+.btn-delete:hover {
+  background: rgba(255, 87, 87, 0.2);
+  transform: translateY(-2px);
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 1.1rem;
+  border-radius: 12px;
+}
+
+.loading {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.error {
+  color: #ff5757;
+  background: rgba(255, 87, 87, 0.1);
+}
+
+.no-recordings {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.no-recordings p {
+  color: #999;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .recordings-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .recording-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .recording-info {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  .recording-actions {
+    flex: 0 0 auto;
+    margin-left: 24px;
+    min-width: 250px;
+  }
+
+  .btn-play,
+  .btn-delete {
+    min-width: 100px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .recordings-header h1 {
+    font-size: 2.8rem;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

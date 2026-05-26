@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 from app.database import get_db
 from app import models, schemas, auth
+from app.email_service import send_welcome_email
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -35,6 +36,10 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    
+    # Enviar email de bienvenida
+    send_welcome_email(user.email, user.username)
+    
     return db_user
 
 

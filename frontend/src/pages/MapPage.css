@@ -1,0 +1,164 @@
+.map-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  height: 100%;
+}
+
+.map-header {
+  text-align: center;
+  animation: slideIn 0.8s ease-out;
+}
+
+.map-header h1 {
+  color: #667eea;
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.map-header p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0 0 24px 0;
+}
+
+.noise-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.map-wrapper {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+  animation: slideIn 0.8s ease-out;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.map-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #667eea;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.popup-content {
+  padding: 12px;
+  min-width: 200px;
+}
+
+.popup-content h4 {
+  color: #667eea;
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+}
+
+.popup-content p {
+  margin: 6px 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.btn-play-popup {
+  width: 100%;
+  padding: 10px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-play-popup:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.recordings-summary {
+  text-align: center;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+  color: #666;
+  font-size: 1rem;
+}
+
+.recordings-summary strong {
+  color: #667eea;
+  font-weight: 700;
+}
+
+@media (min-width: 640px) {
+  .map-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .map-wrapper {
+    height: 700px;
+  }
+
+  .noise-legend {
+    gap: 24px;
+    padding: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .map-header h1 {
+    font-size: 2.8rem;
+  }
+
+  .map-wrapper {
+    height: 800px;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
