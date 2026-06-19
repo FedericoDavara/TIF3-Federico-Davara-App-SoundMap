@@ -9,14 +9,15 @@
 }
 
 .auth-card {
-  background: white;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(230, 240, 250, 0.95) 100%);
   padding: 40px;
   border-radius: 10px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
   width: 100%;
   max-width: 400px;
   position: relative;
   z-index: 20;
+  border: 1px solid rgba(0, 212, 255, 0.1);
 }
 
 .auth-header {
@@ -83,13 +84,13 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #00D4FF;
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
 }
 
 .submit-btn {
   padding: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #00D4FF 0%, #0088FF 100%);
   color: white;
   border: none;
   border-radius: 5px;
@@ -98,11 +99,12 @@
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
   margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
 }
 
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 5px 15px rgba(0, 212, 255, 0.35);
 }
 
 .submit-btn:disabled {
@@ -113,7 +115,7 @@
 .auth-toggle {
   text-align: center;
   margin-top: 20px;
-  color: #666;
+  color: #B0BEC5;
   font-size: 0.95rem;
 }
 
@@ -127,14 +129,15 @@
 .toggle-btn {
   background: none;
   border: none;
-  color: #667eea;
+  color: #00D4FF;
   cursor: pointer;
   font-weight: 600;
   font-size: 0.95rem;
   text-decoration: underline;
   padding: 0;
+  transition: color 0.3s ease;
 }
 
 .toggle-btn:hover {
-  color: #764ba2;
+  color: #0088FF;
 }

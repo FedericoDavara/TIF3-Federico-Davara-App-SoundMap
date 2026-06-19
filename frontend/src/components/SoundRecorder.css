@@ -57,14 +57,12 @@
 }
 
 .noise-level-fill {
-  background: linear-gradient(90deg, #4ade80 0%, #60a5fa 25%, #fbbf24 50%, #f97316 75%, #f87171 100%);
-  transition: width 0.1s ease;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 12px;
+  transition: width 0.1s ease, background 0.3s ease;
+  display: block;
+  height: 100%;
   font-weight: 700;
   font-size: 12px;
+  color: white;
   box-shadow: inset -2px 0 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -278,6 +276,97 @@
   opacity: 1;
 }
 
+/* Clasificación automática */
+.classification-section {
+  margin-bottom: 28px;
+}
+
+.status-text {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  opacity: 0.9;
+}
+
+.predictions-container {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 18px 16px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.predictions-container h3 {
+  margin: 0 0 14px 0;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  opacity: 0.95;
+}
+
+.predictions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.prediction-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  max-width: 100%;
+}
+
+.prediction-chip:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.prediction-chip.selected {
+  background: rgba(74, 222, 128, 0.3);
+  border-color: rgba(74, 222, 128, 0.8);
+  color: #d1fae5;
+  box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
+}
+
+.pred-name {
+  font-weight: 700;
+}
+
+.pred-confidence {
+  font-size: 11px;
+  opacity: 0.8;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.selected-text {
+  font-size: 13px;
+  color: #d1fae5;
+  margin: 0;
+  font-weight: 600;
+}
+
+.description-input {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Responsive */
 @media (min-width: 640px) {
   .recorder-card {
@@ -296,6 +385,16 @@
   .noise-meter {
     padding: 28px 24px;
   }
+
+  .predictions-list {
+    gap: 10px;
+  }
+
+  .prediction-chip {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
 
   .noise-level-bar {
     height: 56px;

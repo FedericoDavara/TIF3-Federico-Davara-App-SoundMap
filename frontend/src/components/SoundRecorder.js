@@ -1,6 +1,7 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { recordingService } from '../services/api';
+import { audioClassifier } from '../services/audioClassifier';
 import './SoundRecorder.css';
 
 function SoundRecorder() {
@@ -11,6 +12,10 @@ function SoundRecorder() {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
   const [averageNoiseLevel, setAverageNoiseLevel] = useState(0);
+  const [predictions, setPredictions] = useState([]);
+  const [selectedPrediction, setSelectedPrediction] = useState(null);
+  const [isClassifying, setIsClassifying] = useState(false);
+  const [modelLoading, setModelLoading] = useState(false);
 
   const mediaRecorderRef = useRef(null);
   const audioContextRef = useRef(null);
@@ -20,6 +25,85 @@ function SoundRecorder() {
   const animationIdRef = useRef(null);
   const noiseLevelsRef = useRef([]);
   const recordingIntervalRef = useRef(null);
+  const classificationIntervalRef = useRef(null);
+
+  // Cargar modelo YAMNet al montar el componente
+  useEffect(() => {
+    const loadModel = async () => {
+      try {
+        setModelLoading(true);
+        await audioClassifier.loadModel();
+        console.log('Modelo YAMNet listo para usar');
+      } catch (error) {
+        console.error('Error al cargar modelo YAMNet:', error);
+        console.log('Se usará clasificación simplificada');
+      } finally {
+        setModelLoading(false);
+      }
+    };
+
+    loadModel();
+
+    return () => {
+      // Limpiar al desmontar
+      if (classificationIntervalRef.current) {
+        clearInterval(classificationIntervalRef.current);
+      }
+    };
+  }, []);
+
+  // Clasificar audio periódicamente
+  const startClassification = () => {
+    if (!audioClassifier.isModelReady) return;
+
+    classificationIntervalRef.current = setInterval(async () => {
+      try {
+        if (analyserRef.current) {
+          setIsClassifying(true);
+          const result = await audioClassifier.classifyFromAnalyser(analyserRef.current);
+          const topPredictions = result.predictions;
+          
+          setPredictions(topPredictions);
+          
+          // Seleccionar automáticamente la predicción principal si tiene alta confianza
+          if (topPredictions[0] && topPredictions[0].confidence > 50) {
+            setSelectedPrediction(topPredictions[0].class);
+          }
+          
+          setIsClassifying(false);
+        }
+      } catch (error) {
+        console.error('Error en clasificación:', error);
+        setIsClassifying(false);
+      }
+    }, 2000); // Clasificar cada 2 segundos
+  };
+
+  // Detener clasificación
+  const stopClassification = () => {
+    if (classificationIntervalRef.current) {
+      clearInterval(classificationIntervalRef.current);
+      classificationIntervalRef.current = null;
+    }
+  };
+
+  // Obtener el color según el nivel de ruido
+  const getNoiseColor = (db) => {
+    if (db < 50) return '#4ade80'; // Verde - seguro
+    if (db < 70) return '#60a5fa'; // Azul - moderado
+    if (db < 85) return '#fbbf24'; // Amarillo - moderado
+    if (db < 100) return '#f97316'; // Naranja - peligroso
+    return '#f87171'; // Rojo - crítico
+  };
+
+  // Obtener descripción según el nivel
+  const getRiskLevel = (db) => {
+    if (db < 50) return 'safe';
+    if (db < 70) return 'moderate';
+    if (db < 85) return 'warning';
+    if (db < 100) return 'danger';
+    return 'critical';
+  };
 
   // Obtener ubicación del usuario
   const getLocation = () => {
@@ -81,6 +165,9 @@ function SoundRecorder() {
       // Iniciar análisis en tiempo real
       analyzeNoiseLevel(analyser);
 
+      // Iniciar clasificación automática
+      startClassification();
+
       // Contador de tiempo
       recordingIntervalRef.current = setInterval(() => {
         setRecordingTime((prev) => prev + 1);
@@ -116,6 +203,7 @@ function SoundRecorder() {
   // Detener grabación
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
+      stopClassification();
       mediaRecorderRef.current.stop();
 
       mediaRecorderRef.current.onstop = async () => {
@@ -165,17 +253,22 @@ function SoundRecorder() {
         const base64Audio = reader.result.split(',')[1]; // Remover el prefijo data:
 
         try {
+          // Usar predicción seleccionada o descripción manual
+          const description = selectedPrediction || noiseDescription || 'Sin clasificación';
+
           // Enviar al servidor
           await recordingService.uploadRecording(
             location.latitude,
             location.longitude,
             averageNoiseLevel,
             base64Audio,
-            noiseDescription || 'Sin descripción'
+            description
           );
 
           setUploadStatus('✓ Grabación guardada exitosamente');
           setNoiseDescription('');
+          setSelectedPrediction(null);
+          setPredictions([]);
           setRecordingTime(0);
           noiseLevelsRef.current = [];
           chunksRef.current = [];
@@ -203,6 +296,8 @@ function SoundRecorder() {
     setNoiseLevel(0);
     setAverageNoiseLevel(0);
     setNoiseDescription('');
+    setSelectedPrediction(null);
+    setPredictions([]);
     setUploadStatus('Grabación descartada');
   };
 
@@ -218,8 +313,9 @@ function SoundRecorder() {
               <div
                 className="noise-level-fill"
                 style={{
-                  width: `${isRecording ? noiseLevel : averageNoiseLevel}%`,
-                  height: '100%'
+                  width: `${Math.min((isRecording ? noiseLevel : averageNoiseLevel) / 100 * 100, 100)}%`,
+                  height: '100%',
+                  background: getNoiseColor(isRecording ? noiseLevel : averageNoiseLevel)
                 }}
               ></div>
             </div>
@@ -234,17 +330,46 @@ function SoundRecorder() {
           )}
         </div>
 
-        {/* Descripción del ruido */}
-        <div className="description-input">
-          <label htmlFor="noise-description">¿Qué tipo de ruido es?</label>
-          <input
-            id="noise-description"
-            type="text"
-            placeholder="Ej: Autos, obras, construcción, tráfico..."
-            value={noiseDescription}
-            onChange={(e) => setNoiseDescription(e.target.value)}
-            disabled={isRecording}
-          />
+        {/* Predicciones y Descripción del ruido */}
+        <div className="classification-section">
+          {modelLoading && (
+            <p className="status-text">⏳ Cargando modelo de IA...</p>
+          )}
+          
+          {predictions.length > 0 && !isRecording && (
+            <div className="predictions-container">
+              <h3>🤖 Clasificación Automática</h3>
+              <div className="predictions-list">
+                {predictions.map((pred, index) => (
+                  <button
+                    key={index}
+                    className={`prediction-chip ${selectedPrediction === pred.class ? 'selected' : ''}`}
+                    onClick={() => setSelectedPrediction(pred.class)}
+                  >
+                    <span className="pred-name">{pred.class}</span>
+                    <span className="pred-confidence">{pred.confidence}%</span>
+                  </button>
+                ))}
+              </div>
+              {selectedPrediction && (
+                <p className="selected-text">✓ Seleccionado: <strong>{selectedPrediction}</strong></p>
+              )}
+            </div>
+          )}
+
+          <div className="description-input">
+            <label htmlFor="noise-description">
+              {predictions.length > 0 ? 'Corregir clasificación (opcional):' : '¿Qué tipo de ruido es?'}
+            </label>
+            <input
+              id="noise-description"
+              type="text"
+              placeholder="Ej: Autos, obras, construcción, tráfico..."
+              value={noiseDescription}
+              onChange={(e) => setNoiseDescription(e.target.value)}
+              disabled={isRecording}
+            />
+          </div>
         </div>
 
         {/* Botones de control */}

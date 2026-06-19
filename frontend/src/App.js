@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import RecorderPage from './pages/RecorderPage';
 import RecordingsPage from './pages/RecordingsPage';
 import MapPage from './pages/MapPage';
+import MonitorPage from './pages/MonitorPage';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
 
@@ -49,6 +50,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <MapPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/monitor"
+              element={
+                <PrivateRoute>
+                  <MonitorPage />
                 </PrivateRoute>
               }
             />

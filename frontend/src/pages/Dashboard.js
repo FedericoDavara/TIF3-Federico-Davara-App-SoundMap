@@ -32,6 +32,11 @@ function Dashboard() {
             <h3>Mapa Interactivo</h3>
             <p>Visualiza las grabaciones y niveles de ruido</p>
           </div>
+          <div className="feature-item" onClick={() => navigate('/monitor')}>
+            <div className="feature-icon">🔊</div>
+            <h3>Monitor de Ruido</h3>
+            <p>Monitorea en tiempo real y recibe alertas</p>
+          </div>
         </div>
         <p className="coming-soon">
           Próximamente: ¡Más funcionalidades emocionantes!
