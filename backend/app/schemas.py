@@ -42,6 +42,8 @@ class AudioRecordingCreate(BaseModel):
     latitude: float
     longitude: float
     noise_level: float
+    min_noise_level: Optional[float] = 0
+    max_noise_level: Optional[float] = 0
     audio_data: str  # Base64 encoded audio
     description: Optional[str] = None
 
@@ -54,6 +56,8 @@ class AudioRecording(BaseModel):
     latitude: float
     longitude: float
     noise_level: float
+    min_noise_level: float
+    max_noise_level: float
     description: Optional[str]
     timestamp: datetime
     created_at: datetime
@@ -67,13 +71,16 @@ class AudioRecordingWithAudio(BaseModel):
     latitude: float
     longitude: float
     noise_level: float
+    min_noise_level: float
+    max_noise_level: float
     description: Optional[str]
     timestamp: datetime
     created_at: datetime
     audio_data: Optional[str] = None
-
+    
     @field_serializer('audio_data')
     def serialize_audio_data(self, value):
+        """Convertir bytes a base64 string"""
         if value is None:
             return None
         if isinstance(value, bytes):

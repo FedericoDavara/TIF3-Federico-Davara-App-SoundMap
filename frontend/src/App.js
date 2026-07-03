@@ -16,9 +16,9 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <MapBackground />
         <Navbar />
-        <main className="main-content">
+        <MapBackground />
+        <div className="main-content">
           <Routes>
             <Route path="/" element={<AuthPage />} />
             <Route
@@ -63,7 +63,7 @@ function App() {
             />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
-        </main>
+        </div>
       </AuthProvider>
     </Router>
   );

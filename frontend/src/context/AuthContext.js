@@ -31,9 +31,11 @@ export function AuthProvider({ children }) {
     try {
       const response = await authService.login(email, password);
       localStorage.setItem('access_token', response.access_token);
+      
       // Obtener datos completos del usuario
       const userData = await authService.getCurrentUser();
       setUser(userData);
+      
       return response;
     } catch (error) {
       throw new Error(error.response?.data?.detail || 'Error al iniciar sesión');
@@ -44,7 +46,11 @@ export function AuthProvider({ children }) {
     try {
       const response = await authService.register(email, username, password);
       localStorage.setItem('access_token', response.access_token);
-      setUser(response.user || { email, username });
+      
+      // Obtener datos completos del usuario
+      const userData = await authService.getCurrentUser();
+      setUser(userData);
+      
       return response;
     } catch (error) {
       throw new Error(error.response?.data?.detail || 'Error al registrarse');

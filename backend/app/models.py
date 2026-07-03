@@ -26,6 +26,8 @@ class AudioRecording(Base):
     latitude = Column(Float)
     longitude = Column(Float)
     noise_level = Column(Float)  # Promedio del nivel de ruido en dB
+    min_noise_level = Column(Float, default=0)  # Mínimo nivel de ruido en dB
+    max_noise_level = Column(Float, default=0)  # Máximo nivel de ruido en dB
     audio_data = Column(LargeBinary)  # Datos de audio en base64
     description = Column(String, nullable=True)  # Tipo de ruido: autos, obras, etc.
     timestamp = Column(DateTime(timezone=True), server_default=func.now())

@@ -24,7 +24,7 @@ function Navbar() {
   };
 
   const navLinks = [
-    { path: '/dashboard', label: 'Dashboard' },
+    { path: '/dashboard', label: 'Página Principal' },
     { path: '/recorder', label: 'Grabadora' },
     { path: '/recordings', label: 'Mis Grabaciones' },
     { path: '/map', label: 'Mapa' },

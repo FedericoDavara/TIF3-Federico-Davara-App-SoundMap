@@ -40,11 +40,13 @@ export const authService = {
 };
 
 export const recordingService = {
-  uploadRecording: async (latitude, longitude, noiseLevel, audioData, description) => {
+  uploadRecording: async (latitude, longitude, noiseLevel, minNoiseLevel, maxNoiseLevel, audioData, description) => {
     const response = await api.post('/api/recordings/upload', {
       latitude,
       longitude,
       noise_level: noiseLevel,
+      min_noise_level: minNoiseLevel,
+      max_noise_level: maxNoiseLevel,
       audio_data: audioData,
       description,
     });

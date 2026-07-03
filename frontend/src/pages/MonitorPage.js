@@ -12,8 +12,9 @@ function MonitorPage() {
   const [predictions, setPredictions] = useState([]);
   const [selectedPrediction, setSelectedPrediction] = useState(null);
   const [modelLoading, setModelLoading] = useState(false);
-  const [isClassifying, setIsClassifying] = useState(false);
   const [manualDescription, setManualDescription] = useState('');
+  const [monitoringFinished, setMonitoringFinished] = useState(false);
+  const [lastClassification, setLastClassification] = useState(null);
 
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
@@ -89,7 +90,6 @@ function MonitorPage() {
     classificationIntervalRef.current = setInterval(async () => {
       try {
         if (analyserRef.current) {
-          setIsClassifying(true);
           const result = await audioClassifier.classifyFromAnalyser(analyserRef.current);
           const topPredictions = result.predictions;
           
@@ -99,12 +99,9 @@ function MonitorPage() {
           if (topPredictions[0] && topPredictions[0].confidence > 50) {
             setSelectedPrediction(topPredictions[0].class);
           }
-          
-          setIsClassifying(false);
         }
       } catch (error) {
         console.error('Error en clasificación:', error);
-        setIsClassifying(false);
       }
     }, 2000); // Clasificar cada 2 segundos
   };
@@ -146,6 +143,7 @@ function MonitorPage() {
   // Iniciar monitoreo
   const startMonitoring = async () => {
     try {
+      resetMonitoring();
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
@@ -249,19 +247,36 @@ function MonitorPage() {
         audioContextRef.current.close();
         audioContextRef.current = null;
       }
+      
+      // Guardar los últimos resultados antes de finalizar
+      setLastClassification({
+        classification: selectedPrediction || predictions[0]?.class || 'Desconocido',
+        confidence: predictions[0]?.confidence || 0,
+        averageNoise: averageNoise,
+        riskLevel: riskLevel
+      });
+      
       setIsMonitoring(false);
-      setNoiseLevel(0);
-      setAverageNoise(0);
-      setRiskLevel('safe');
-      setShowAlert(false);
-      setPredictions([]);
-      setSelectedPrediction(null);
+      setMonitoringFinished(true);
       noiseLevelsRef.current = [];
       previousRiskRef.current = 'safe';
     } catch (err) {
       console.error('Error al detener monitoreo:', err);
       setIsMonitoring(false);
     }
+  };
+
+  // Reiniciar monitoreo (limpia los resultados anteriores)
+  const resetMonitoring = () => {
+    setMonitoringFinished(false);
+    setLastClassification(null);
+    setNoiseLevel(0);
+    setAverageNoise(0);
+    setRiskLevel('safe');
+    setShowAlert(false);
+    setPredictions([]);
+    setSelectedPrediction(null);
+    setManualDescription('');
   };
 
   useEffect(() => {
@@ -345,10 +360,6 @@ function MonitorPage() {
           {modelLoading && (
             <p className="status-text">⏳ Cargando modelo de IA...</p>
           )}
-          
-          {isClassifying && (
-            <p className="status-text">🤖 Clasificando ruido...</p>
-          )}
 
           {predictions.length > 0 && (
             <div className="predictions-container">
@@ -425,7 +436,7 @@ function MonitorPage() {
       <div className="monitor-controls">
         {!isMonitoring ? (
           <button className="btn btn-primary btn-large" onClick={startMonitoring}>
-            ▶ Iniciar Monitoreo
+            {monitoringFinished ? '🔄 Monitorear de Nuevo' : '▶ Iniciar Monitoreo'}
           </button>
         ) : (
           <button className="btn btn-danger btn-large" onClick={stopMonitoring}>
@@ -433,6 +444,26 @@ function MonitorPage() {
           </button>
         )}
       </div>
+
+      {/* Resultados finales (cuando se detiene el monitoreo) */}
+      {monitoringFinished && lastClassification && !isMonitoring && (
+        <div className="monitoring-results">
+          <h2>📋 Resultados del Monitoreo</h2>
+          <div className="results-grid">
+            <div className="result-item">
+              <span className="result-label">Clasificación</span>
+              <span className="result-value">{lastClassification.classification}</span>
+              <span className="result-confidence">{lastClassification.confidence}% confianza</span>
+            </div>
+            <div className="result-item">
+              <span className="result-label">Promedio de Ruido</span>
+              <span className="result-value">{lastClassification.averageNoise} dB</span>
+              <span className="result-status">Nivel: {lastClassification.riskLevel.toUpperCase()}</span>
+            </div>
+          </div>
+          <p className="results-note">Los resultados se borrarán cuando inicies un nuevo monitoreo</p>
+        </div>
+      )}
 
       {/* Información de seguridad */}
       <div className="safety-info">

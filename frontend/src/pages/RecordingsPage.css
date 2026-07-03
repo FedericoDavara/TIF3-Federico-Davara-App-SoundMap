@@ -42,6 +42,84 @@
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 212, 255, 0.3);
 }
 
+/* Filtros */
+.filters-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  animation: slideIn 0.6s ease-out;
+}
+
+.filters-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.filter-select {
+  padding: 10px 12px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-select:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+.filter-select option {
+  background: #1a1a2e;
+  color: white;
+}
+
+.filter-results {
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  padding: 8px 12px;
+  background: rgba(74, 222, 128, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+@media (max-width: 640px) {
+  .filters-container {
+    grid-template-columns: 1fr;
+  }
+}
+
 .recordings-list {
   display: flex;
   flex-direction: column;
@@ -78,12 +156,55 @@
 }
 
 .recording-location,
-.recording-noise,
 .recording-date {
   color: #555;
   font-size: 0.95rem;
   margin: 6px 0;
   line-height: 1.5;
+}
+
+/* Estadísticas de ruido */
+.noise-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0;
+  padding: 16px;
+  background: #FFFFFF !important;
+  border-radius: 8px;
+  border: 2px solid #00D4FF;
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.stat-label {
+  color: #000000 !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  color: #00D4FF !important;
+  font-size: 1.5rem !important;
+  font-weight: 900 !important;
+  text-shadow: none;
+}
+
+@media (max-width: 640px) {
+  .noise-stats {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 }
 
 .recording-actions {

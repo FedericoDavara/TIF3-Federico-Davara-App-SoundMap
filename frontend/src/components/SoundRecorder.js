@@ -1,5 +1,4 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState, useRef, useEffect } from 'react';
 import { recordingService } from '../services/api';
 import { audioClassifier } from '../services/audioClassifier';
 import './SoundRecorder.css';
@@ -12,9 +11,11 @@ function SoundRecorder() {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
   const [averageNoiseLevel, setAverageNoiseLevel] = useState(0);
+  const [minNoiseLevel, setMinNoiseLevel] = useState(0);
+  const [maxNoiseLevel, setMaxNoiseLevel] = useState(0);
   const [predictions, setPredictions] = useState([]);
   const [selectedPrediction, setSelectedPrediction] = useState(null);
-  const [isClassifying, setIsClassifying] = useState(false);
+  const [classificationLocked, setClassificationLocked] = useState(false);
   const [modelLoading, setModelLoading] = useState(false);
 
   const mediaRecorderRef = useRef(null);
@@ -33,10 +34,16 @@ function SoundRecorder() {
       try {
         setModelLoading(true);
         await audioClassifier.loadModel();
-        console.log('Modelo YAMNet listo para usar');
+        const hasModel = audioClassifier.model !== null && audioClassifier.model !== undefined;
+        
+        if (hasModel) {
+          console.log('✓ YAMNet cargado - Usando clasificación profunda con IA');
+        } else {
+          console.log('⚠ YAMNet no disponible - Usando análisis inteligente de frecuencias');
+        }
       } catch (error) {
         console.error('Error al cargar modelo YAMNet:', error);
-        console.log('Se usará clasificación simplificada');
+        console.log('✓ Usando análisis inteligente de frecuencias (modo local)');
       } finally {
         setModelLoading(false);
       }
@@ -58,23 +65,20 @@ function SoundRecorder() {
 
     classificationIntervalRef.current = setInterval(async () => {
       try {
-        if (analyserRef.current) {
-          setIsClassifying(true);
-          const result = await audioClassifier.classifyFromAnalyser(analyserRef.current);
+        if (analyserRef.current && audioContextRef.current && !classificationLocked) {
+          const result = await audioClassifier.classifyFromAnalyser(analyserRef.current, audioContextRef.current);
           const topPredictions = result.predictions;
           
           setPredictions(topPredictions);
           
           // Seleccionar automáticamente la predicción principal si tiene alta confianza
-          if (topPredictions[0] && topPredictions[0].confidence > 50) {
+          // pero solo si el usuario no ha bloqueado la clasificación
+          if (topPredictions[0] && topPredictions[0].confidence > 50 && !classificationLocked) {
             setSelectedPrediction(topPredictions[0].class);
           }
-          
-          setIsClassifying(false);
         }
       } catch (error) {
         console.error('Error en clasificación:', error);
-        setIsClassifying(false);
       }
     }, 2000); // Clasificar cada 2 segundos
   };
@@ -89,20 +93,11 @@ function SoundRecorder() {
 
   // Obtener el color según el nivel de ruido
   const getNoiseColor = (db) => {
-    if (db < 50) return '#4ade80'; // Verde - seguro
-    if (db < 70) return '#60a5fa'; // Azul - moderado
-    if (db < 85) return '#fbbf24'; // Amarillo - moderado
-    if (db < 100) return '#f97316'; // Naranja - peligroso
-    return '#f87171'; // Rojo - crítico
-  };
-
-  // Obtener descripción según el nivel
-  const getRiskLevel = (db) => {
-    if (db < 50) return 'safe';
-    if (db < 70) return 'moderate';
-    if (db < 85) return 'warning';
-    if (db < 100) return 'danger';
-    return 'critical';
+    if (db < 30) return '#4ade80'; // Verde - silencio/muy bajo
+    if (db < 60) return '#60a5fa'; // Azul - bajo
+    if (db < 75) return '#fbbf24'; // Amarillo - moderado
+    if (db < 90) return '#f97316'; // Naranja - fuerte
+    return '#f87171'; // Rojo - muy fuerte/peligroso
   };
 
   // Obtener ubicación del usuario
@@ -134,6 +129,9 @@ function SoundRecorder() {
       noiseLevelsRef.current = [];
       setAverageNoiseLevel(0);
       setRecordingTime(0);
+      setClassificationLocked(false); // Reset clasificación
+      setPredictions([]); // Limpiar predicciones anteriores
+      audioClassifier.lastClassification = null; // Reset cache
 
       // Solicitar permiso de micrófono
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -185,11 +183,16 @@ function SoundRecorder() {
     const analyze = () => {
       analyser.getByteFrequencyData(dataArray);
 
-      // Calcular promedio de ruido (en rango 0-100)
+      // Calcular promedio de ruido (en rango 0-255)
       const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
       
-      // Convertir a escala dB (aproximada)
-      const db = Math.round((average / 255) * 100);
+      // Convertir a escala dB usando logaritmo
+      // Fórmula ajustada: 40 * log10(amplitud/255 * 100 + 0.1) + 20
+      // En silencio: 0 dB
+      // Conversación: ~80-85 dB
+      // Parlante fuerte: ~95-100 dB
+      const normalizedValue = Math.max(average / 255 * 100, 0.1);
+      const db = Math.max(0, Math.round(40 * Math.log10(normalizedValue) + 20));
       
       setNoiseLevel(db);
       noiseLevelsRef.current.push(db);
@@ -211,11 +214,16 @@ function SoundRecorder() {
         clearInterval(recordingIntervalRef.current);
         cancelAnimationFrame(animationIdRef.current);
 
-        // Calcular promedio de ruido
+        // Calcular promedio, mínimo y máximo de ruido
         const avgNoise = Math.round(
           noiseLevelsRef.current.reduce((a, b) => a + b, 0) / noiseLevelsRef.current.length
         );
+        const minNoise = Math.min(...noiseLevelsRef.current);
+        const maxNoise = Math.max(...noiseLevelsRef.current);
+        
         setAverageNoiseLevel(avgNoise);
+        setMinNoiseLevel(minNoise);
+        setMaxNoiseLevel(maxNoise);
 
         // Detener stream
         if (streamRef.current) {
@@ -261,6 +269,8 @@ function SoundRecorder() {
             location.latitude,
             location.longitude,
             averageNoiseLevel,
+            minNoiseLevel,
+            maxNoiseLevel,
             base64Audio,
             description
           );
@@ -273,6 +283,8 @@ function SoundRecorder() {
           noiseLevelsRef.current = [];
           chunksRef.current = [];
           setAverageNoiseLevel(0);
+          setMinNoiseLevel(0);
+          setMaxNoiseLevel(0);
         } catch (error) {
           console.error('Error al guardar grabación:', error);
           setUploadStatus('Error al guardar la grabación: ' + (error.response?.data?.detail || error.message));
@@ -297,6 +309,7 @@ function SoundRecorder() {
     setAverageNoiseLevel(0);
     setNoiseDescription('');
     setSelectedPrediction(null);
+    setClassificationLocked(false);
     setPredictions([]);
     setUploadStatus('Grabación descartada');
   };
@@ -344,7 +357,11 @@ function SoundRecorder() {
                   <button
                     key={index}
                     className={`prediction-chip ${selectedPrediction === pred.class ? 'selected' : ''}`}
-                    onClick={() => setSelectedPrediction(pred.class)}
+                    onClick={() => {
+                      setSelectedPrediction(pred.class);
+                      setClassificationLocked(true); // Bloquear la clasificación
+                      setNoiseDescription(''); // Limpiar entrada manual
+                    }}
                   >
                     <span className="pred-name">{pred.class}</span>
                     <span className="pred-confidence">{pred.confidence}%</span>
@@ -352,7 +369,18 @@ function SoundRecorder() {
                 ))}
               </div>
               {selectedPrediction && (
-                <p className="selected-text">✓ Seleccionado: <strong>{selectedPrediction}</strong></p>
+                <div className="selected-text">
+                  <p>✓ Seleccionado: <strong>{selectedPrediction}</strong></p>
+                  {classificationLocked && (
+                    <button 
+                      className="btn-unlock"
+                      onClick={() => setClassificationLocked(false)}
+                      title="Desbloquear para cambiar clasificación"
+                    >
+                      🔒 Cambiar
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           )}

@@ -24,16 +24,18 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 @media (min-width: 768px) {
   .main-content {
-    padding: 120px 32px 40px 32px;
+    padding: 140px 32px 40px 32px;
   }
 }
 
 @media (min-width: 1024px) {
   .main-content {
-    padding: 110px 40px 40px 40px;
+    padding: 130px 40px 40px 40px;
   }
 }

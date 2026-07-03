@@ -5,6 +5,7 @@
   "proxy": "http://localhost:8000",
   "dependencies": {
     "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-backend-webgl": "^4.22.0",
     "axios": "^1.6.2",
     "chart.js": "^4.5.1",
     "leaflet": "^1.9.4",
@@ -13,7 +14,8 @@
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.0",
     "react-router-dom": "^6.20.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "recharts": "^3.9.1"
   },
   "scripts": {
     "start": "react-scripts start",

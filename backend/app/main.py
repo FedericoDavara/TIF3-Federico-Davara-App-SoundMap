@@ -13,7 +13,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(title="SoundMap+ API", version="1.0.0")
 
 # CORS
-origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
